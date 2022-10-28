@@ -1,0 +1,17 @@
+a {
+	text-decoration: none;
+	color: inherit;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.25rem;
+}
+
+.container {
+	height: 100vh;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	background-image: url(../assets/background.jpg);
+	background-size: cover;
+}
