@@ -14,14 +14,28 @@ const addMovie = async (movieData) => {
 	return response.data;
 };
 
-const getMovie = async (movieData) => {
+const searchMovies = async (id) => {
 	const config = {
 		headers: {
 			authorization: `Bearer ${await getToken()}`,
 		},
 	};
 
-	const response = await axios.get(API_URL + `${movieData}`, config);
+	const response = await axios.get(API_URL + `/search/${id}`, config);
+
+	if (response.data) {
+		return response.data;
+	}
+};
+
+const getMovie = async (id) => {
+	const config = {
+		headers: {
+			authorization: `Bearer ${await getToken()}`,
+		},
+	};
+
+	const response = await axios.get(API_URL + `${id}`, config);
 
 	if (response.data) {
 		return response.data;
@@ -40,6 +54,7 @@ const getMovie = async (movieData) => {
 const movieService = {
 	addMovie,
 	getMovie,
+	searchMovies,
 };
 
 export default movieService;

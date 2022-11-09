@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { MdAlternateEmail, MdPassword } from 'react-icons/md';
+// import { MdAlternateEmail, MdPassword } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { login, resetUser } from '../features/auth/authSlice';
-import Header from '../components/Header/Header';
+// import Header from '../Header/Header';
 
-import '../components/Login/Login.css';
+import {
+	Container,
+	Box,
+	Typography,
+	TextField,
+	Button,
+	Snackbar,
+	Alert,
+} from '@mui/material';
 
 const Login = () => {
 	const [formData, setFormData] = useState({
@@ -14,6 +22,9 @@ const Login = () => {
 	});
 
 	const { email, password } = formData;
+
+	const [popup, setPopup] = useState(false);
+	const [popupMessage, setPopupMessage] = useState('Action failed..');
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -24,7 +35,8 @@ const Login = () => {
 
 	useEffect(() => {
 		if (isError) {
-			toast.error(message);
+			setPopupMessage(message);
+			setPopup(true);
 		}
 
 		if (isSuccess || user) {
@@ -43,39 +55,83 @@ const Login = () => {
 
 	const onSubmit = (e) => {
 		e.preventDefault();
-		const userData = {
-			email,
-			password,
-		};
+		if (email != '' || password != '') {
+			const userData = {
+				email,
+				password,
+			};
 
-		dispatch(login(userData));
+			dispatch(login(userData));
+		} else {
+			setPopupMessage('Missing required inputs');
+			setPopup(true);
+		}
 	};
 
 	return (
-		<div className='container'>
-			<Header />
-			<main className='login'>
-				<div className='login__box'>
-					<form className='login__form'>
-						<label htmlFor='email'>Email</label>
-						<div className='login__form_input'>
-							<input type='text' name='email' onChange={onChange} />
-							<MdAlternateEmail />
-						</div>
-						<label htmlFor='password'>Password</label>
-						<div className='login__form_input'>
-							<input type='password' name='password' onChange={onChange} />
-							<MdPassword />
-						</div>
-						<div className='login__form_button'>
-							<p onClick={onSubmit}>Login</p>
-						</div>
-					</form>
-					<div className='login__footer'>
-						<Link to='/register'>Not a member yet? Register now</Link>
-					</div>
-				</div>
-			</main>
+		<div className='registerContainer'>
+			<Snackbar
+				open={popup}
+				autoHideDuration={6000}
+				onClose={() => setPopup(false)}
+				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+			>
+				<Alert onClose={() => setPopup(false)} severity='info'>
+					{popupMessage}
+				</Alert>
+			</Snackbar>
+			<Container maxWidth='lg'>
+				<Box
+					display='flex'
+					height='100vh'
+					alignItems='center'
+					position='relative'
+					zIndex='10'
+				>
+					<Box width='22rem'>
+						<Box>
+							<Typography variant='h1'>Login.</Typography>
+							<Typography display='flex' flexDirection='row' variant='body1'>
+								New member?{' '}
+								<Typography
+									ml='1rem'
+									component='span'
+									color='primary.main'
+									variant='body1'
+								>
+									<Link to='/register'>Create account</Link>
+								</Typography>
+							</Typography>
+						</Box>
+						<Box display='flex' flexDirection='column' gap='1rem' mt='5rem'>
+							<TextField
+								id='email'
+								name='email'
+								variant='filled'
+								label='Email'
+								required
+								onChange={onChange}
+							/>
+							<TextField
+								color='secondary'
+								id='password'
+								variant='filled'
+								label='Password'
+								type='password'
+								required
+								onChange={onChange}
+							/>
+							<Button
+								onClick={onSubmit}
+								variant='contained'
+								sx={{ marginTop: '2rem' }}
+							>
+								Login
+							</Button>
+						</Box>
+					</Box>
+				</Box>
+			</Container>
 		</div>
 	);
 };

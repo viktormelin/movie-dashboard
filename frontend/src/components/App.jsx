@@ -7,12 +7,25 @@ import { store } from '../app/store';
 import { ToastContainer } from 'react-toastify';
 import './App.css';
 // import MoviePage from '../pages/Movies/MoviePage';
-import Index from '../pages/Index';
+// import Index from '../pages/Index';
+
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from '../theme';
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import Movies from '../pages/Movies';
+import Series from '../pages/Series';
+import MoviePreview from '../pages/MoviePreview';
 
 export default function AppWrapper() {
 	return (
 		<Provider store={store}>
-			<App />
+			<ThemeProvider theme={theme}>
+				<App />
+			</ThemeProvider>
 		</Provider>
 	);
 }
@@ -22,10 +35,13 @@ const App = () => {
 		<>
 			<Router>
 				<Routes>
-					<Route path='/' element={<Index />} />
+					<Route path='/' element={<Login />} />
 					<Route path='/dashboard' element={<Dashboard />} />
 					<Route path='/login' element={<Login />} />
 					<Route path='/register' element={<Register />} />
+					<Route path='/movies' element={<Movies />} />
+					<Route path='/movies/:id' element={<MoviePreview />} />
+					<Route path='/series' element={<Series />} />
 					{/* <Route path='/movies/:id' element={<MoviePage />} /> */}
 				</Routes>
 			</Router>
