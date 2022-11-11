@@ -106,7 +106,7 @@ const Navbar = () => {
 			justifyContent='space-between'
 			height='fit-content'
 			width='100%'
-			padding='1rem'
+			padding='1rem 5rem'
 		>
 			{searchResultWindowOpen ? (
 				<Dialog
@@ -223,49 +223,6 @@ const Navbar = () => {
 							}}
 						/>
 					</form>
-					{/* {searchResult ? (
-						<Box
-							sx={{
-								position: 'absolute',
-								top: '3rem',
-								bgcolor: 'gray.main',
-								width: '100%',
-								display: 'flex',
-								flexDirection: 'column',
-								gap: '1rem',
-								maxHeight: '30rem',
-								overflowY: 'scroll',
-							}}
-						>
-							{searchResult.map((movie) => (
-								<Box
-									key={movie.id}
-									sx={{
-										display: 'flex',
-										alignItems: 'center',
-										height: '5rem',
-										gap: '0.5rem',
-										padding: '0.5rem',
-										cursor: 'pointer',
-										'&:hover': {
-											bgcolor: 'gray.dark',
-										},
-									}}
-									onClick={() => clickMovie(movie)}
-								>
-									<img
-										style={{ maxHeight: '100%' }}
-										src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-										alt='movie.title'
-									/>
-									<Typography fontSize='0.8rem' variant='body1'>
-										{movie.title || movie.name} -{' '}
-										{movie.release_date || movie.first_air_date}
-									</Typography>
-								</Box>
-							))}
-						</Box>
-					) : null} */}
 				</Box>
 				<Tooltip title='Friends' arrow>
 					<IconButton
