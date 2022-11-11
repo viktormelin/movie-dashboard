@@ -44,17 +44,22 @@ export const searchMovies = createAsyncThunk(
 	}
 );
 
-export const getMovie = createAsyncThunk('movies/get', async (id, thunkAPI) => {
-	try {
-		return await movieService.getMovie(id);
-	} catch (error) {
-		const message =
-			(error.response && error.response.data && error.response.data.message) ||
-			error.message ||
-			error.toString();
-		return thunkAPI.rejectWithValue(message);
+export const getMovie = createAsyncThunk(
+	'movies/get',
+	async (item, thunkAPI) => {
+		try {
+			return await movieService.getMovie(item);
+		} catch (error) {
+			const message =
+				(error.response &&
+					error.response.data &&
+					error.response.data.message) ||
+				error.message ||
+				error.toString();
+			return thunkAPI.rejectWithValue(message);
+		}
 	}
-});
+);
 
 export const movieSlice = createSlice({
 	name: 'movie',
