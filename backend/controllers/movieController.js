@@ -17,10 +17,6 @@ const searchMovies = asyncHandler(async (req, res) => {
 	if (id) {
 		const response = await axiosInstance.get(`search/multi?query=${id}`);
 
-		// const response = await axios.get(
-		// 	`https://imdb-api.com/en/API/AdvancedSearch/${process.env.API_TOKEN}/?title=${id}`
-		// );
-
 		if (response.status === 200) {
 			res.status(200).send(response.data.results);
 		} else {

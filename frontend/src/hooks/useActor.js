@@ -10,7 +10,6 @@ export const useActor = (id) => {
 	useEffect(() => {
 		const fetchActor = async () => {
 			const response = await getActorApi(id);
-			console.log(response);
 			setActorData({
 				loading: false,
 				actorData: response,
