@@ -6,7 +6,7 @@ import pageReducer from '../features/utils/pageSlice';
 export const store = configureStore({
 	reducer: {
 		auth: authReducer,
-		movies: movieReducer,
+		movie: movieReducer,
 		page: pageReducer,
 	},
 });
