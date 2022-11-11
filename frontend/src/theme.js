@@ -45,13 +45,6 @@ export const theme = createTheme({
 				},
 			},
 		},
-		// MuiSvgIcon: {
-		// 	styleOverrides: {
-		// 		root: {
-		// 			color: '#fff',
-		// 		},
-		// 	},
-		// },
 		MuiTooltip: {
 			styleOverrides: {
 				tooltip: {
@@ -61,6 +54,14 @@ export const theme = createTheme({
 				tooltipArrow: {
 					backgroundColor: '#f2ec9b',
 					color: '#000',
+				},
+			},
+		},
+		MuiPaper: {
+			styleOverrides: {
+				root: {
+					backgroundColor: '#212121',
+					borderRadius: '0.5rem',
 				},
 			},
 		},
