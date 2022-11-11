@@ -20,6 +20,7 @@ import Movies from '../pages/Movies';
 import Series from '../pages/Series';
 import MoviePreview from '../pages/MoviePreview';
 import ForgotPassword from '../pages/ForgotPassword';
+import ActorPreview from '../pages/ActorPreview';
 
 export default function AppWrapper() {
 	return (
@@ -42,10 +43,8 @@ const App = () => {
 					<Route path='/register' element={<Register />} />
 					<Route path='/forgotpassword' element={<ForgotPassword />} />
 					<Route path='/movies' element={<Movies />} />
+					<Route path='/actors/:id' element={<ActorPreview />} />
 					<Route path='/:type/:id' element={<MoviePreview />} />
-					{/* <Route path='/tv/:id' element={<MoviePreview />} /> */}
-					<Route path='/series' element={<Series />} />
-					{/* <Route path='/movies/:id' element={<MoviePage />} /> */}
 				</Routes>
 			</Router>
 			<ToastContainer />

@@ -12,7 +12,7 @@ import {
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import getMovieApi from '../api/getMovieApi';
 import Navbar from '../components/Navbar/Navbar';
 import { getMovie } from '../features/movies/movieSlice';
@@ -20,18 +20,19 @@ import { useMovie } from '../hooks/useMovie';
 
 const MoviePreview = () => {
 	const { type, id } = useParams();
-	// const movieData = useSelector((state) => state.movies);
 	const { loading, movieData } = useMovie(type, id);
 	const [rating, setRating] = useState();
-	// const [loading, setLoading] = useState(true);
 
 	const userData = useSelector((state) => state.auth);
-
-	console.log(movieData.credits);
+	const navigate = useNavigate();
 
 	if (!userData.user) {
-		return <Navigate to='/login' />;
+		navigate('/login');
 	}
+
+	const clickActor = (actorId) => {
+		navigate(`/actors/${actorId}`);
+	};
 
 	// useEffect(() => {
 	// 	if (!movieData.movie || id != movieData.movie.id) {
@@ -169,6 +170,7 @@ const MoviePreview = () => {
 															color: 'primary.main',
 														},
 													}}
+													onClick={() => clickActor(actor.id)}
 													variant='body2'
 												>
 													{actor.name}
