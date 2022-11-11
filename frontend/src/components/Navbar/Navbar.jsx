@@ -17,11 +17,16 @@ import {
 	Box,
 	InputAdornment,
 	CircularProgress,
+	Dialog,
+	List,
+	ListItem,
 } from '@mui/material';
+import { grey } from '@mui/material/colors';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import searchApi from '../../api/searchApi';
 import {
 	addMovie,
 	getMovie,
@@ -36,6 +41,7 @@ const Navbar = () => {
 	const [searchQuery, setQuery] = useState(null);
 	const [searchResult, setSearchResult] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [searchResultWindowOpen, setSearchResultWindowOpen] = useState(false);
 
 	const { page } = useSelector((state) => state.page);
 	const dispatch = useDispatch();
@@ -43,43 +49,47 @@ const Navbar = () => {
 
 	const movieData = useSelector((state) => state.movies);
 
-	useEffect(() => {
-		if (movieData.isError) {
-			console.error(movieData.message);
-		}
+	// useEffect(() => {
+	// 	if (movieData.isError) {
+	// 		console.error(movieData.message);
+	// 	}
 
-		if (movieData.isSuccess && movieData.movies) {
-			setSearchResult(movieData.movies);
-			setLoading(false);
-		}
-	}, [
-		movieData.movies,
-		movieData.movie,
-		movieData.isSuccess,
-		movieData.isError,
-		movieData.message,
-		dispatch,
-	]);
+	// 	// if (movieData.isSuccess && movieData.movies) {
+	// 	// 	setSearchResult(movieData.movies);
+	// 	// 	setLoading(false);
+	// 	// }
+	// }, [
+	// 	movieData.movies,
+	// 	movieData.movie,
+	// 	movieData.isSuccess,
+	// 	movieData.isError,
+	// 	movieData.message,
+	// 	dispatch,
+	// ]);
 
 	const searchChange = (e) => {
 		setQuery(e.target.value);
 	};
 
-	const searchSubmit = () => {
+	const searchSubmit = async (e) => {
+		e.preventDefault();
 		if (searchQuery && searchQuery != '') {
+			setSearchResultWindowOpen(true);
 			setQuery(null);
 			setLoading(true);
-			dispatch(searchMovies(searchQuery));
+			// dispatch(searchMovies(searchQuery));
+			setSearchResult(await searchApi(searchQuery));
+			setLoading(false);
 		}
 	};
 
-	const clickMovie = (id) => {
+	const clickMovie = (movie) => {
 		dispatch(resetMovie());
 		setSearchResult(null);
 		setQuery(null);
 
-		dispatch(getMovie(id));
-		navigate(`/movies/${id}`);
+		// dispatch(getMovie(movie));
+		navigate(`/${movie.media_type}/${movie.id}`);
 	};
 
 	const emptySubmit = () => {
@@ -89,7 +99,8 @@ const Navbar = () => {
 
 	return (
 		<Box
-			position='absolute'
+			position='fixed'
+			left='0'
 			top='0'
 			display='flex'
 			justifyContent='space-between'
@@ -97,6 +108,67 @@ const Navbar = () => {
 			width='100%'
 			padding='1rem'
 		>
+			{searchResultWindowOpen ? (
+				<Dialog
+					open={searchResultWindowOpen}
+					onClose={() => setSearchResultWindowOpen(false)}
+					scroll='body'
+				>
+					<Box
+						sx={{
+							width: '100%',
+							height: '50vh',
+							display: 'flex',
+							alignItems: 'center',
+						}}
+					>
+						{searchResult && !loading ? (
+							<Box
+								sx={{
+									height: '100%',
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '1rem',
+									paddingTop: '1rem',
+									paddingBottom: '1rem',
+								}}
+							>
+								{searchResult.map((item) => (
+									<Box
+										key={item.id}
+										sx={{
+											display: 'flex',
+											alignItems: 'center',
+											cursor: 'pointer',
+											color: '#fff',
+											'&:hover': {
+												bgcolor: 'gray.dark',
+											},
+										}}
+										onClick={() => clickMovie(item)}
+									>
+										<img
+											style={{ maxHeight: '7rem', marginRight: '1rem' }}
+											src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+											alt={item.title}
+										/>
+										<Box sx={{ paddingTop: '1rem', paddingBottom: '1rem' }}>
+											<Typography fontSize='1.1rem' variant='h3'>
+												{item.title || item.name} -{' '}
+												{item.release_date || item.first_air_date}
+											</Typography>
+											<Typography fontSize='0.8rem' variant='body1'>
+												{item.overview}
+											</Typography>
+										</Box>
+									</Box>
+								))}
+							</Box>
+						) : null}
+						{loading ? <CircularProgress size='36px' /> : null}
+					</Box>
+				</Dialog>
+			) : null}
 			<Box display='flex' alignItems='center' gap='1.5rem'>
 				<Typography fontSize='1.2rem' variant='body1'>
 					<Link onClick={() => dispatch(setPage('dashboard'))} to='/dashboard'>
@@ -116,40 +188,42 @@ const Navbar = () => {
 			</Box>
 			<Box display='flex' alignItems='center' gap='1rem'>
 				<Box position='relative' display='flex' flexDirection='column'>
-					<TextField
-						id='searchQuery'
-						name='searchQuery'
-						variant='filled'
-						label='Search'
-						size='small'
-						onChange={searchChange}
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position='end'>
-									{loading ? <CircularProgress size='24px' /> : null}
-									{!loading && !searchResult ? (
-										<Search
-											onClick={searchSubmit}
-											sx={{
-												cursor: 'pointer',
-												color: 'primary.main',
-											}}
-										/>
-									) : null}
-									{!loading && searchResult ? (
-										<Clear
-											onClick={emptySubmit}
-											sx={{
-												cursor: 'pointer',
-												color: 'primary.main',
-											}}
-										/>
-									) : null}
-								</InputAdornment>
-							),
-						}}
-					/>
-					{searchResult ? (
+					<form onSubmit={searchSubmit}>
+						<TextField
+							id='searchQuery'
+							name='searchQuery'
+							variant='filled'
+							label='Search'
+							size='small'
+							onChange={searchChange}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position='end'>
+										{loading ? <CircularProgress size='24px' /> : null}
+										{!loading && !searchResult ? (
+											<Search
+												onClick={searchSubmit}
+												sx={{
+													cursor: 'pointer',
+													color: 'primary.main',
+												}}
+											/>
+										) : null}
+										{!loading && searchResult ? (
+											<Clear
+												onClick={emptySubmit}
+												sx={{
+													cursor: 'pointer',
+													color: 'primary.main',
+												}}
+											/>
+										) : null}
+									</InputAdornment>
+								),
+							}}
+						/>
+					</form>
+					{/* {searchResult ? (
 						<Box
 							sx={{
 								position: 'absolute',
@@ -177,20 +251,21 @@ const Navbar = () => {
 											bgcolor: 'gray.dark',
 										},
 									}}
-									onClick={() => clickMovie(movie.id)}
+									onClick={() => clickMovie(movie)}
 								>
 									<img
 										style={{ maxHeight: '100%' }}
-										src={movie.image}
+										src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
 										alt='movie.title'
 									/>
 									<Typography fontSize='0.8rem' variant='body1'>
-										{movie.title} - {movie.description}
+										{movie.title || movie.name} -{' '}
+										{movie.release_date || movie.first_air_date}
 									</Typography>
 								</Box>
 							))}
 						</Box>
-					) : null}
+					) : null} */}
 				</Box>
 				<Tooltip title='Friends' arrow>
 					<IconButton
