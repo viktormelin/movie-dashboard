@@ -33,6 +33,43 @@ const loginUser = asyncHandler(async (req, res) => {
 // @desc    Create a new user
 // @route   POST /api/user
 // @access  Public
+const resetPassword = asyncHandler(async (req, res) => {
+	const { email, password } = req.body;
+	if (!email || !password) {
+		res.status(400);
+		throw new Error('Please add all fields');
+	}
+
+	const userExists = await User.findOne({ email });
+
+	if (userExists) {
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(password, salt);
+		const updatedUser = await User.updateOne(
+			{ email },
+			{ password: hashedPassword }
+		);
+
+		if (updatedUser) {
+			res.status(201).json({
+				_id: updatedUser.id,
+				name: updatedUser.name,
+				email: updatedUser.email,
+				token: generateToken(updatedUser.id),
+			});
+		} else {
+			res.status(400);
+			throw new Error('Invalid user data');
+		}
+	} else {
+		res.status(400);
+		throw new Error('User does not exist');
+	}
+});
+
+// @desc    Create a new user
+// @route   POST /api/user
+// @access  Public
 const registerUser = asyncHandler(async (req, res) => {
 	const { name, email, password } = req.body;
 	if (!name || !email || !password) {
@@ -83,4 +120,4 @@ const getUser = asyncHandler(async (req, res) => {
 	});
 });
 
-module.exports = { loginUser, registerUser, getUser };
+module.exports = { resetPassword, loginUser, registerUser, getUser };
