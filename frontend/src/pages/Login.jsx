@@ -94,7 +94,7 @@ const Login = () => {
 							<Typography display='flex' flexDirection='row' variant='body1'>
 								New member?{' '}
 								<Typography
-									ml='1rem'
+									ml='0.25rem'
 									component='span'
 									color='primary.main'
 									variant='body1'
@@ -128,6 +128,9 @@ const Login = () => {
 							>
 								Login
 							</Button>
+							<Typography component='span' color='primary.main' variant='body1'>
+								<Link to='/forgotpassword'>Forgot password?</Link>
+							</Typography>
 						</Box>
 					</Box>
 				</Box>
