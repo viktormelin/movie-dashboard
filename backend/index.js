@@ -17,6 +17,7 @@ app.use(errorHandler);
 app.use('/api/user', require('./routes/userRoute'));
 app.use('/api/favorites', require('./routes/favoriteRoutes'));
 app.use('/api/movies', require('./routes/movieRoutes'));
+app.use('/api/tv', require('./routes/tvRoutes'));
 
 app.listen(port, () => {
 	console.log(`Backend running @ ${process.env.URL}:${port}`);
